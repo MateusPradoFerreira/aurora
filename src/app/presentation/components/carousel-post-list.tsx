@@ -3,7 +3,7 @@ import { usePosts } from "../../data/hooks/post/use-posts";
 import { PostCard } from "./post-card";
 import { Carousel, CarouselContent, CarouselNext, CarouselPrevious, CarouselProps } from "./ui/carousel";
 
-type CarouselPostListProps = {
+export type CarouselPostListProps = {
   tags: string[];
   limit?: number;
   className?: string;

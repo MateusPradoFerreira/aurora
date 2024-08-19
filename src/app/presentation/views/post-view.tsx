@@ -1,12 +1,13 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { usePost } from "../../data/hooks/post/use-post";
 import { CarouselPostList } from "../components/carousel-post-list";
 import { TagChip } from "../components/tag-chip";
 import { Button } from "../components/ui/button";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { TbZoomScan } from "react-icons/tb";
-import { useState } from "react";
-import { Dialog, DialogContent, DialogTitle } from "../components/ui/dialog";
+import { PhotoProvider, PhotoView } from "react-photo-view";
+import "react-photo-view/dist/react-photo-view.css";
+import { useTagNavigation } from "../hooks/useTagNavigation";
 
 function tagStringConversor(tagString: string): { label: string, value: string }[] {
   return tagString.split(" ").map(tag => ({ label: tag.split("_").join(" "), value: tag }));
@@ -16,13 +17,8 @@ export function PostView() {
 
   let { id } = useParams();
 
-  const navigate = useNavigate();
+  const tagNavigation = useTagNavigation();
   const { data, isLoading } = usePost(Number(id));
-  const [open, setOpen] = useState(false);
-
-  const handleToggleOpenState = () => setOpen(prev => !prev);
-
-  console.log(data)
 
   const isVideo = data?.file_ext === "mp4";
 
@@ -46,9 +42,13 @@ export function PostView() {
           </Button>
 
           { !isVideo? (
-            <Button variant="ghost" shape="square" className="absolute bottom-0 right-0 mb-3 mr-3 text-2xl" onClick={handleToggleOpenState}>
-              <TbZoomScan />
-            </Button>
+            <PhotoProvider maskOpacity={.8} bannerVisible={false}>
+              <PhotoView src={data.large_file_url}>
+                <Button variant="ghost" shape="square" className="absolute bottom-0 right-0 mb-3 mr-3 text-2xl">
+                  <TbZoomScan />
+                </Button>
+              </PhotoView>
+            </PhotoProvider>
           ) : ""}
         </div>
 
@@ -56,19 +56,19 @@ export function PostView() {
           <h1 className="font-semibold line-clamp-2 capitalize mb-2 text-lg text-zinc-700">{(data.tag_string_character ||data.tag_string_artist).split(" ").join(", ").split("_").join(" ")}</h1>
           <div className="flex flex-wrap gap-1">
             { data.tag_string_copyright? tagStringConversor(data.tag_string_copyright).map(tag => (
-              <TagChip command={() => navigate(`/search?tags=${tag.value}`)} key={Math.random()} variant="copyright" className="text-xs 2xl:text-sm">{tag.label}</TagChip>
+              <TagChip command={() => tagNavigation(tag.value)} key={Math.random()} variant="copyright" className="text-xs 2xl:text-sm">{tag.label}</TagChip>
             )) : ""}
             { data.tag_string_artist? tagStringConversor(data.tag_string_artist).map(tag => (
-              <TagChip command={() => navigate(`/search?tags=${tag.value}`)} key={Math.random()} variant="artist" className="text-xs 2xl:text-sm">{tag.label}</TagChip>
+              <TagChip command={() => tagNavigation(tag.value)} key={Math.random()} variant="artist" className="text-xs 2xl:text-sm">{tag.label}</TagChip>
             )) : ""}
             { data.tag_string_character? tagStringConversor(data.tag_string_character).map(tag => (
-              <TagChip command={() => navigate(`/search?tags=${tag.value}`)} key={Math.random()} variant="character" className="text-xs 2xl:text-sm">{tag.label}</TagChip>
+              <TagChip command={() => tagNavigation(tag.value)} key={Math.random()} variant="character" className="text-xs 2xl:text-sm">{tag.label}</TagChip>
             )) : ""}
             { data.tag_string_general? tagStringConversor(data.tag_string_general).map(tag => (
-              <TagChip command={() => navigate(`/search?tags=${tag.value}`)} key={Math.random()} variant="general" className="text-xs 2xl:text-sm">{tag.label}</TagChip>
+              <TagChip command={() => tagNavigation(tag.value)} key={Math.random()} variant="general" className="text-xs 2xl:text-sm">{tag.label}</TagChip>
             )) : ""}
             { data.tag_string_meta? tagStringConversor(data.tag_string_meta).map(tag => (
-              <TagChip command={() => navigate(`/search?tags=${tag.value}`)} key={Math.random()} variant="meta" className="text-xs 2xl:text-sm">{tag.label}</TagChip>
+              <TagChip command={() => tagNavigation(tag.value)} key={Math.random()} variant="meta" className="text-xs 2xl:text-sm">{tag.label}</TagChip>
             )) : ""}
           </div>
         </aside>
@@ -79,7 +79,7 @@ export function PostView() {
         <div className="mb-6">
           <div className="mb-3 flex justify-between items-center">
             <h2 className="font-medium text-zinc-700">Related Posts</h2>
-            <Button variant="slate" size="sm">View More</Button>
+            <Button variant="slate" size="sm" onClick={() => tagNavigation(`parent:${data.parent_id}`)}>View More</Button>
           </div>
           <CarouselPostList cardClassName="" tags={[`parent:${data.parent_id}`]} />
         </div>
@@ -89,18 +89,11 @@ export function PostView() {
         <div className="mb-6" key={Math.random()}>
           <div className="mb-3 flex justify-between items-center">
             <h2 className="font-medium text-zinc-700 capitalize">More of Artist "{ tag.split("_").join(" ") }"</h2>
-            <Button variant="slate" size="sm">View More</Button>
+            <Button variant="slate" size="sm" onClick={() => tagNavigation(tag)}>View More</Button>
           </div>
           <CarouselPostList cardClassName="" tags={[tag]} />
         </div>
       )) : ""}
-
-      <Dialog open={open} onOpenChange={handleToggleOpenState}>
-        <DialogContent className="border-0 bg-transparent shadow-none rounded-none h-fit w-fit flex items-center justify-center">
-          <DialogTitle className="hidden" />
-          <img className="max-w-screen max-h-screen" src={data.large_file_url} alt="" />
-        </DialogContent>
-      </Dialog>
 
     </div>
   );

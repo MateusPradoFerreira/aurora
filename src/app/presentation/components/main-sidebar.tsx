@@ -5,6 +5,7 @@ import { MainNavLink } from './main-nav-link';
 import { MdInfoOutline, MdOutlineSsidChart } from "react-icons/md";
 import { LuPencilRuler } from 'react-icons/lu';
 import { FiUsers } from "react-icons/fi";
+import { HiOutlineHome } from 'react-icons/hi';
 
 export function MainSidebar() {
 
@@ -14,6 +15,7 @@ export function MainSidebar() {
         <img src={logo} alt="" className="w-10 h-10" />
       </div>
       <nav className="px-2 py-8 flex flex-col gap-1">
+        <MainNavLink icon={HiOutlineHome} to="/home" />
         <MainNavLink icon={FaRegCompass} to="/explore" />
         <MainNavLink icon={MdOutlineSsidChart} to="/popular" />
         <MainNavLink icon={LuPencilRuler} to="/artists" />
