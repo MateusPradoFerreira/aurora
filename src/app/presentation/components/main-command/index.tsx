@@ -8,7 +8,7 @@ import { MainCommandContext } from "../../contexts/main-command-context";
 export function MainCommand() {
 
   const [ open, setOpen ] = useState(false);
-  const { query, setQuery, inputRef } = useContext(MainCommandContext);
+  const { query, setQuery, inputRef, tagSearch } = useContext(MainCommandContext);
 
   const handleToggleModalState = () => {
     setOpen(!open);
@@ -19,7 +19,7 @@ export function MainCommand() {
     <Fragment>
       <MainCommandSearch 
         className="w-full hidden sm:flex"
-        inputProps={{ className: "bg-slate-100 rounded-l-full", onFocus: handleToggleModalState, placeholder: "Search by posts, pools, artists..." }} 
+        inputProps={{ value: tagSearch.map(tag => tag.label).join(", "), onChange: () => {}, className: "bg-slate-100 rounded-l-full", onFocus: handleToggleModalState, placeholder: "Search by posts, pools, artists..." }} 
         buttonProps={{ variant: "slate", onClick: handleToggleModalState, className: "rounded-r-full" }} 
       />
       <MainCommandDialog open={open} onOpenChange={handleToggleModalState}>
