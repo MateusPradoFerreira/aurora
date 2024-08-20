@@ -10,7 +10,7 @@ export type FindPostsUseCaseParams = {
 export class FindPostsUseCase {
   
   static async execute({ tags = [], page = 1, limit = 80, ...params}: FindPostsUseCaseParams): Promise<Post[]> {
-    const stringTags = tags.join(" ") + " rating:general" // + " rating:general";
+    const stringTags = tags.join(" ") // + " rating:general";
     const { data } = await DanbooruApi.get<Post[]>("/posts.json", { params: { ...params, tags: stringTags, page, limit }});
     return data.filter(post => post.file_ext !== "zip");
   }

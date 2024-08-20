@@ -5,6 +5,7 @@ import { PostView } from "./presentation/views/post-view";
 import { SearchView } from "./presentation/views/search-view";
 import { ExploreView } from "./presentation/views/explore-view";
 import { PopularView } from "./presentation/views/popular-view";
+import { BookmarkedView } from "./presentation/views/bookmarked-view";
 
 export const router = createBrowserRouter([
   { path: "", element: <Navigate to="home"/> },
@@ -19,5 +20,6 @@ export const router = createBrowserRouter([
     { path: "popular", element: <PopularView /> },
     { path: "popular/:startDate", element: <PopularView /> },
     { path: "popular/:startDate/:endDate", element: <PopularView /> },
+    { path: "bookmark", element: <BookmarkedView /> },
   ]}
 ])

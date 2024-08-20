@@ -31,7 +31,9 @@ export function MainHeader() {
         <MainCommand />
       </MainCommandProvider>
       <nav className="flex items-center gap-2">
-        <Button variant="ghost">Bookmark</Button>
+        <Link to="/bookmark">
+          <Button variant="ghost">Bookmark</Button>
+        </Link>
         <Button>Danbooru</Button>
       </nav>
     </header>
